@@ -362,6 +362,9 @@ main {
 .card .icon { width: 16px; height: 16px; color: var(--dim); flex-shrink: 0; }
 .card:hover .icon { color: var(--accent); }
 
+.card-upcoming:hover { background: var(--panel); border-color: var(--border); transform: none; }
+.card-domain { font-family: var(--mono); font-size: 11.5px; color: var(--dim); white-space: nowrap; }
+
 .tags {
   display: flex;
   flex-wrap: wrap;

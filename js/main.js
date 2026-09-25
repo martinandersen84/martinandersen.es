@@ -24,8 +24,10 @@
       "term.chain": "esquemático → pcb → firmware → 3d → producto",
       "sec.projects": "proyectos destacados",
       "ideaalab.desc": "Electrónica, magia e innovación: productos propios, tutoriales y proyectos con mandos a distancia, servos y microcontroladores.",
+      "cronum.desc": "Estudio de proyectos digitales y herramientas de productividad. Web próximamente.",
       "papatalk.desc": "App web para comunicarse con personas hospitalizadas que no pueden hablar —intubadas o con dificultades de comunicación verbal— pero que conservan movilidad en las manos.",
       "tag.education": "educación",
+      "tag.soon": "próximamente",
       "tag.accessibility": "accesibilidad",
       "tag.health": "salud",
       "os.note": "Cargado en vivo desde",
@@ -34,8 +36,10 @@
       "ha.sub": "Componentes e integraciones para Home Assistant",
       "wp.title": "plugins WordPress",
       "wp.sub": "Plugins para WordPress y WooCommerce",
+      "tools.title": "herramientas",
+      "tools.sub": "Analizadores lógicos y utilidades de radiofrecuencia",
       "other.title": "otros proyectos",
-      "other.sub": "Herramientas y proyectos que no encajan en las categorías anteriores",
+      "other.sub": "Otros proyectos personales",
       "sec.contact": "contacto",
       "footer.note": "hecho a mano — sin frameworks, sin cookies",
       "status.loading": "cargando repos…",
@@ -62,8 +66,10 @@
       "term.chain": "schematic → pcb → firmware → 3d → product",
       "sec.projects": "featured projects",
       "ideaalab.desc": "Electronics, magic and innovation: own products, tutorials and projects with remote controls, servos and microcontrollers.",
+      "cronum.desc": "Studio for digital projects and productivity tools. Website coming soon.",
       "papatalk.desc": "Web app to communicate with hospitalized people who can't speak — intubated or with verbal-communication difficulties — but who keep some hand mobility.",
       "tag.education": "education",
+      "tag.soon": "coming soon",
       "tag.accessibility": "accessibility",
       "tag.health": "health",
       "os.note": "Loaded live from",
@@ -72,8 +78,10 @@
       "ha.sub": "Components and integrations for Home Assistant",
       "wp.title": "WordPress plugins",
       "wp.sub": "Plugins for WordPress and WooCommerce",
+      "tools.title": "tools",
+      "tools.sub": "Logic analyzers and radio frequency utilities",
       "other.title": "other projects",
-      "other.sub": "Tools and projects that don't fit the categories above",
+      "other.sub": "Other personal projects",
       "sec.contact": "contact",
       "footer.note": "handmade — no frameworks, no cookies",
       "status.loading": "loading repos…",
@@ -131,9 +139,9 @@
 
   /* ---------- repos de GitHub ---------- */
 
-  var GH_USER = "ideaalab";
+  var GH_USER = "martinandersen84";
   var API_URL = "https://api.github.com/users/" + GH_USER + "/repos?per_page=100&sort=pushed";
-  var CACHE_KEY = "gh-repos-v1";
+  var CACHE_KEY = "gh-repos-v3-" + GH_USER;
   var CACHE_TTL = 60 * 60 * 1000; // 1 hora
 
   var grids = document.querySelectorAll(".repo-grid[data-topic]");
@@ -175,11 +183,15 @@
     return p;
   }
 
+  function clearDynamicCards(grid) {
+    grid.querySelectorAll(".repo-card, .repo-status").forEach(function (el) { el.remove(); });
+  }
+
   function renderState() {
     if (state.repos) { renderRepos(state.repos); return; }
 
     grids.forEach(function (grid) {
-      grid.innerHTML = "";
+      clearDynamicCards(grid);
       if (state.status === "error") {
         var p = document.createElement("p");
         p.className = "repo-status";
@@ -204,12 +216,8 @@
         .filter(function (r) { return r.topics.indexOf(topic) !== -1; })
         .sort(function (a, b) { return (b.stars - a.stars) || a.name.localeCompare(b.name); });
 
-      grid.innerHTML = "";
-
-      if (list.length === 0) {
-        grid.appendChild(statusNode(t("status.empty")));
-        return;
-      }
+      clearDynamicCards(grid);
+      grid.closest(".repo-group").hidden = list.length === 0 && !grid.querySelector(".repo-static");
 
       list.forEach(function (r) {
         var card = document.createElement("a");
